@@ -42,7 +42,7 @@ WORKDIR /app
 # pkg@VERSION: the shared preset's regex needs `-g` immediately followed by
 # the pkg@VERSION token, so a flag in between silently un-tracks the line.
 # renovate: datasource=npm depName=serve
-RUN npm install -g serve@14.2.6 --ignore-scripts
+RUN npm install -g serve@14.2.7 --ignore-scripts
 
 # Copy built files from builder stage
 COPY --from=builder /app/dist ./dist
