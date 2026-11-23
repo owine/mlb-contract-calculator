@@ -15,7 +15,7 @@ WORKDIR /app
 # it explicitly. pnpm supports script-less installs (its placeholder bins run
 # through Node), which is also how Corepack ran it.
 # renovate: datasource=npm depName=pnpm
-ARG PNPM_VERSION=12.21.0
+ARG PNPM_VERSION=12.22.0
 RUN npm install -g pnpm@$PNPM_VERSION --ignore-scripts
 
 # Copy manifests, lockfile, and policy files first so the install layer stays
