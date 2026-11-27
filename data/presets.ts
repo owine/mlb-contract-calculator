@@ -247,7 +247,7 @@ export const PRESETS: Preset[] = [
     group: 'Opt-outs',
     name: 'Kyle Tucker (LAD, 2026–29)',
     note:
-      'Opt-outs after 2027 and 2028, plus $10M deferred from each of 2027–29, with each season’s $10M paid $1M a year 2036–45 (pro-rata). No Valley Charge: the post-opt-out years stay above the 80% Figure. Spotrac shows $57,195,000 (rounded); ESPN and MLBTR $57.1M (truncated).',
+      'Opt-outs after 2027 and 2028, plus $10M deferred from each of 2027–29, with each season’s $10M paid $1M a year 2036–45 (pro-rata). No Valley Charge: the post-opt-out years stay above the 80% Figure. Spotrac shows $57,195,000 and ESPN and MLBTR $57.1M, both truncated (rounding would give $57,196,000 and $57.2M).',
     input: {
       seasons: [
         { season: 2026, currentSalary: 1 * M, deferred: 0, kind: 'guaranteed' as const },
