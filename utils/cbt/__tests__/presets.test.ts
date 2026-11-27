@@ -53,4 +53,23 @@ describe('presets', () => {
     expect(Math.round(r.aavAtSigning)).toBe(57_195_945);
     expect(r.charges.filter((c) => c.kind === 'valley')).toEqual([]);
   });
+
+  it('A7 Skubal: after-term bonus installments are discounted; engine value $48,754,052 (sequential)', () => {
+    const p = preset('skubal');
+    const r = calculate(p.input, defaultScenario(p.input));
+    expect(Math.round(r.aavAtSigning)).toBe(48_754_052);
+    expect(r.charges.find((c) => c.kind === 'aav' && c.season === 2027)!.rules).toContain('A7');
+  });
+
+  it('Skubal on Cot’s schedule ($30M salary deferred, $3M a year 2036–45) reproduces its $439,556,273 present value', () => {
+    const p = preset('skubal');
+    const deferred = 30_000_000 / 9;
+    const input = {
+      ...p.input,
+      seasons: p.input.seasons.map((s) => ({ ...s, currentSalary: 45_000_000 - deferred, deferred })),
+      signingBonus: { amount: 45_000_000, payments: [] },
+      deferral: { ...p.input.deferral, payments: Array.from({ length: 10 }, (_, i) => ({ year: 2036 + i, amount: 3_000_000 })) },
+    };
+    expect(Math.round(calculate(input, defaultScenario(input)).aavAtSigning * 9)).toBe(439_556_273);
+  });
 });
