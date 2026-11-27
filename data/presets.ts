@@ -150,9 +150,13 @@ export const PRESETS: Preset[] = [
     group: 'Deferred money',
     name: 'Tarik Skubal (NYM, 2027–35)',
     note:
-      'Deferred money on both sides: $2,777,777.78 of each $45M salary ($25M in all, paid $1M in 2038 and $3M a year 2039–46, no interest reported), and $5M of the $45M signing bonus, paid after the term (July 1, 2037 and 2038) and so discounted like deferred pay (A7). The contract doesn’t say which installments pay which season’s deferral; sequential is shown, and pro-rata gives about $48.77M. No published CBT figure uses these terms: Cot’s $439,556,273 present value (Spotrac’s $48.84M) assumes $30M of salary deferred, paid $3M a year 2036–45, and the engine reproduces it to the dollar on that schedule. No options or opt-outs.',
+      'Deferred money on both sides: $2,777,777.78 of each $45M salary ($25M in all, paid $1M in 2038 and $3M a year 2039–46, no interest reported), and $5M of the $45M signing bonus, paid after the term (July 1, 2037 and 2038) and so discounted like deferred pay (A7). The contract sets each season’s deferral but not which installments pay it. Sequential is shown, as Cot’s uses; pro-rata, and with equal deferrals the CBA default (F4(b)) too, give about $48.77M. No published CBT figure uses these terms: Cot’s $439,556,273 present value (Spotrac’s $48.84M) assumes $30M of salary deferred, paid $3M a year 2036–45, and the engine reproduces it to the dollar on that schedule. No options or opt-outs. Terms are from search-result excerpts of the sources below, not yet checked against the pages.',
     input: {
-      seasons: range(2027, 9).map((season) => ({ season, currentSalary: 42_222_222.22, deferred: 2_777_777.78, kind: 'guaranteed' as const })),
+      // $2,777,777.78 deferred a season; the last season takes the rounding so the deferrals total exactly $25M.
+      seasons: range(2027, 9).map((season) => {
+        const deferred = season === 2035 ? 2_777_777.76 : 2_777_777.78;
+        return { season, currentSalary: 45 * M - deferred, deferred, kind: 'guaranteed' as const };
+      }),
       signingBonus: {
         amount: 45 * M,
         payments: [
@@ -225,7 +229,7 @@ export const PRESETS: Preset[] = [
     group: 'Signing bonus',
     name: 'Freddy Peralta (BAL, 2027–31)',
     note:
-      'A $10M signing bonus, payable within 60 days of the Commissioner’s approval, spread evenly over the five Guaranteed Years with $23M salaries. No deferrals or opt-outs, so the CBT charge equals the $25M AAV (A1).',
+      'A $10M signing bonus, payable within 60 days of the Commissioner’s approval, spread evenly over the five Guaranteed Years with $23M salaries. No deferrals or opt-outs, so the CBT charge equals the $25M AAV (A1); no outlet states the CBT figure itself. Terms are from search-result excerpts of the sources below, not yet checked against the pages.',
     input: {
       seasons: range(2027, 5).map((season) => ({ season, currentSalary: 23 * M, deferred: 0, kind: 'guaranteed' as const })),
       signingBonus: { amount: 10 * M, payments: [] },
@@ -237,7 +241,6 @@ export const PRESETS: Preset[] = [
       { url: 'https://www.mlbtraderumors.com/2026/11/orioles-sign-freddy-peralta.html', confirms: '$10MM signing bonus, $23MM salaries 2027–31, no deferrals or opt-outs' },
       { url: 'https://www.mlb.com/news/freddy-peralta-orioles-contract', confirms: 'Five years, $125 million' },
     ],
-    reported: { seasons: range(2027, 5), cbt: 25 * M, tolerance: 0.01, note: '$125M ÷ 5; no deferrals' },
   },
   {
     id: 'tucker',

@@ -54,6 +54,19 @@ describe('presets', () => {
     expect(r.charges.filter((c) => c.kind === 'valley')).toEqual([]);
   });
 
+  it('A1 Peralta: no deferrals or opt-outs, so every season is the $25M AAV', () => {
+    const p = preset('peralta');
+    const r = calculate(p.input, defaultScenario(p.input));
+    expect(r.perSeason.map((s) => s.cbt)).toEqual(Array(5).fill(25_000_000));
+  });
+
+  it('Skubal deferred principal equals the $25M repayment schedule', () => {
+    const { seasons, deferral } = preset('skubal').input;
+    const cents = (n: number) => Math.round(n * 100);
+    expect(seasons.reduce((s, r) => s + cents(r.deferred), 0)).toBe(cents(25_000_000));
+    expect(deferral.payments.reduce((s, p) => s + cents(p.amount), 0)).toBe(cents(25_000_000));
+  });
+
   it('A7 Skubal: after-term bonus installments are discounted; engine value $48,754,052 (sequential)', () => {
     const p = preset('skubal');
     const r = calculate(p.input, defaultScenario(p.input));
