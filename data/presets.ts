@@ -146,6 +146,42 @@ export const PRESETS: Preset[] = [
     reported: { seasons: range(2026, 5), cbt: 30_893_902, tolerance: 1, note: 'MLBTR present value ÷ 5 (also Spotrac)' },
   },
   {
+    id: 'skubal',
+    group: 'Deferred money',
+    name: 'Tarik Skubal (NYM, 2027–35)',
+    note:
+      'Deferred money on both sides: $2,777,777.78 of each $45M salary ($25M in all, paid $1M in 2038 and $3M a year 2039–46, no interest reported), and $5M of the $45M signing bonus, paid after the term (July 1, 2037 and 2038) and so discounted like deferred pay (A7). The contract sets each season’s deferral but not which installments pay it. Sequential is shown, as Cot’s uses; pro-rata, and with equal deferrals the CBA default (F4(b)) too, give about $48.77M. No published CBT figure uses these terms: Cot’s $439,556,273 present value (Spotrac’s $48.84M) assumes $30M of salary deferred, paid $3M a year 2036–45, and the engine reproduces it to the dollar on that schedule. No options or opt-outs. Terms are from search-result excerpts of the sources below, not yet checked against the pages.',
+    input: {
+      // $2,777,777.78 deferred a season; the last season takes the rounding so the deferrals total exactly $25M.
+      seasons: range(2027, 9).map((season) => {
+        const deferred = season === 2035 ? 2_777_777.76 : 2_777_777.78;
+        return { season, currentSalary: 45 * M - deferred, deferred, kind: 'guaranteed' as const };
+      }),
+      signingBonus: {
+        amount: 45 * M,
+        payments: [
+          { year: 2027, amount: 40 * M },
+          { year: 2037, amount: 3 * M },
+          { year: 2038, amount: 2 * M },
+        ],
+      },
+      optOuts: [],
+      deferral: {
+        payments: [{ year: 2038, amount: 1 * M }, ...range(2039, 8).map((year) => ({ year, amount: 3 * M }))],
+        attribution: 'sequential',
+        statedInterestPct: 0,
+      },
+      ilirPct: 4.61, // October 2026 annual mid-term AFR (Rev. Rul. 2026-19)
+    },
+    sources: [
+      { url: 'https://www.wral.com/news/ap/17d78-tarik-skubal-and-new-york-mets-finalize-450-million-9-year-contract-record-for-a-pitcher/', confirms: 'AP: $45M bonus paid $40M March 1, 2027, $3M July 1, 2037, $2M July 1, 2038; $2,777,777.78 a year deferred, paid $1M in 2038 and $3M a year 2039–46' },
+      { url: 'https://mlbtraderumors.com/2026/11/mets-to-sign-tarik-skubal.html', confirms: '$45MM signing bonus; no options or opt-outs' },
+      { url: 'https://sports.yahoo.com/articles/salary-cap-problem-mets-nine-183136122.html', confirms: 'Forbes, citing Cot’s: CBT present value $439,556,273 at 4.61%, on $30M deferred 2036–45' },
+      { url: 'https://www.spotrac.com/mlb/player/_/id/26337/tarik-skubal', confirms: 'Luxury tax $48,840,000; $30M of salary deferred, $3M a year 2036–45' },
+      { url: 'https://www.vitallaw.com/news/applicable-federal-rates-for-october-2026-released-rev-rul-2026-19/ftd01163f385cdac14ccaac50f8cb80739512', confirms: 'October 2026 mid-term AFR 4.61% (Rev. Rul. 2026-19)' },
+    ],
+  },
+  {
     id: 'vlad',
     group: 'Signing bonus',
     name: 'Vladimir Guerrero Jr. (TOR, 2026–39)',
@@ -189,11 +225,29 @@ export const PRESETS: Preset[] = [
     reported: { seasons: range(2025, 15), cbt: 51_000_000, tolerance: 0.01, note: 'Cot’s, before award bonuses' },
   },
   {
+    id: 'peralta',
+    group: 'Signing bonus',
+    name: 'Freddy Peralta (BAL, 2027–31)',
+    note:
+      'A $10M signing bonus, payable within 60 days of the Commissioner’s approval, spread evenly over the five Guaranteed Years with $23M salaries. No deferrals or opt-outs, so the CBT charge equals the $25M AAV (A1); no outlet states the CBT figure itself. Terms are from search-result excerpts of the sources below, not yet checked against the pages.',
+    input: {
+      seasons: range(2027, 5).map((season) => ({ season, currentSalary: 23 * M, deferred: 0, kind: 'guaranteed' as const })),
+      signingBonus: { amount: 10 * M, payments: [] },
+      optOuts: [],
+      deferral: { payments: [], attribution: 'sequential', statedInterestPct: 0 },
+      ilirPct: 0, // not used: no deferred compensation
+    },
+    sources: [
+      { url: 'https://www.mlbtraderumors.com/2026/11/orioles-sign-freddy-peralta.html', confirms: '$10MM signing bonus, $23MM salaries 2027–31, no deferrals or opt-outs' },
+      { url: 'https://www.mlb.com/news/freddy-peralta-orioles-contract', confirms: 'Five years, $125 million' },
+    ],
+  },
+  {
     id: 'tucker',
     group: 'Opt-outs',
     name: 'Kyle Tucker (LAD, 2026–29)',
     note:
-      'Opt-outs after 2027 and 2028, plus $10M deferred from each of 2027–29, with each season’s $10M paid $1M a year 2036–45 (pro-rata). No Valley Charge: the post-opt-out years stay above the 80% Figure. Spotrac shows $57,195,000 (rounded); ESPN and MLBTR $57.1M (truncated).',
+      'Opt-outs after 2027 and 2028, plus $10M deferred from each of 2027–29, with each season’s $10M paid $1M a year 2036–45 (pro-rata). No Valley Charge: the post-opt-out years stay above the 80% Figure. Spotrac shows $57,195,000 and ESPN and MLBTR $57.1M, both truncated (rounding would give $57,196,000 and $57.2M).',
     input: {
       seasons: [
         { season: 2026, currentSalary: 1 * M, deferred: 0, kind: 'guaranteed' as const },
